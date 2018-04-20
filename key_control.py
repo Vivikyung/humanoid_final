@@ -25,11 +25,11 @@ def set_neutral():
     Sets both arms back into a neutral pose.
     """
     print("Moving to neutral pose...")
-    baxter_interface._left_arm.move_to_neutral()
-    baxter_interface._right_arm.move_to_neutral()
+    baxter_interface.limb.Limb("left").move_to_neutral()
+    baxter_interface.limb.Limb("right").move_to_neutral()
 
     #Sets head into neutral pose
-    baxter_interface._head.set_pan(0.0)
+    baxter_interface.Head().set_pan(0.0)
 
 def map_keyboard():
     """
