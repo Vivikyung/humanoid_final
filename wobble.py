@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import math
 import argparse 
 import random
 import rospy 
@@ -73,7 +74,7 @@ class Wobbler(object):
         self._head.command_nod()
         command_rate = rospy.Rate(1)
         control_rate = rospy.Rate(100)
-        start = rospy.get_time()
+        start = rospy.Time.now()
 
         def make_v_func():
             """
