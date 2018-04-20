@@ -20,6 +20,17 @@ def set_j(limb, joint_name, delta):
     joint_command = {joint_name: current_position + delta}
     limb.set_joint_positions(joint_command)
 
+def set_neutral():
+    """
+    Sets both arms back into a neutral pose.
+    """
+    print("Moving to neutral pose...")
+    baxter_interface._left_arm.move_to_neutral()
+    baxter_interface._right_arm.move_to_neutral()
+
+    #Sets head into neutral pose
+    baxter_interface._head.set_pan(0.0)
+
 def map_keyboard():
     """
     Maps keyboard input to joint position commands.
@@ -104,8 +115,8 @@ def main():
    on each row for each joint.
    """
     epilog = """
-See help inside the example with the '?' key for key bindings.
-   """
+    See help inside the example with the '?' key for key bindings.
+    """
     arg_fmt = argparse.RawDescriptionHelpFormatter
     parser = argparse.ArgumentParser(formatter_class=arg_fmt,
                                      description=main.__doc__,
@@ -118,16 +129,8 @@ See help inside the example with the '?' key for key bindings.
     rs = baxter_interface.RobotEnable(CHECK_VERSION)
     init_state = rs.state().enabled
 
-    def set_neutral():
-        """
-        Sets both arms back into a neutral pose.
-        """
-        print("Moving to neutral pose...")
-        baxter_interface._left_arm.move_to_neutral()
-        baxter_interface._right_arm.move_to_neutral()
-
-        #Sets head into neutral pose
-        baxter_interface._head.set_pan(0.0)
+    print("Moving into neutral position...")
+    set_neutral()
 
     def clean_shutdown():
         set_neutral()
