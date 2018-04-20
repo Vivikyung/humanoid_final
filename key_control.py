@@ -118,7 +118,19 @@ See help inside the example with the '?' key for key bindings.
     rs = baxter_interface.RobotEnable(CHECK_VERSION)
     init_state = rs.state().enabled
 
+    def set_neutral():
+        """
+        Sets both arms back into a neutral pose.
+        """
+        print("Moving to neutral pose...")
+        baxter_interface._left_arm.move_to_neutral()
+        baxter_interface._right_arm.move_to_neutral()
+
+        #Sets head into neutral pose
+        baxter_interface._head.set_pan(0.0)
+
     def clean_shutdown():
+        set_neutral()
         print("\nExiting example...")
         if not init_state:
             print("Disabling robot...")
