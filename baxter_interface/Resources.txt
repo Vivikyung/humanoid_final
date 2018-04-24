@@ -1,0 +1,10 @@
+Resources
+
+code examples:
+http://sdk.rethinkrobotics.com/wiki/API_Reference#Joints
+
+Baxter specific simulator:
+http://sdk.rethinkrobotics.com/wiki/Simulator_Installation
+
+Baxter specific Limb API:
+http://api.rethinkrobotics.com/baxter_interface/html/baxter_interface.limb.Limb-class.html#joint_angles
