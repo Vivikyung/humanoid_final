@@ -1,0 +1,8 @@
+<launch>
+
+  <include file="$(find baxter_moveit_config)/launch/demo_baxter.launch"/>
+
+  <node name="move_arms" pkg="humanoid_final" type="move_arms.py" respawn="false" output="screen">
+  </node>
+
+</launch>

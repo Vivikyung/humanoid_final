@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import sys
 import copy
 import rospy
@@ -77,10 +79,7 @@ def move_group_python_interface_tutorial():
     moveit_commander.roscpp_shutdown()
 
 if __name__=='__main__':
-  try:
     move_group_python_interface_tutorial()
-  except rospy.ROSInterruptException:
-    pass
 
 
 
