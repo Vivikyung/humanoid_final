@@ -43,14 +43,19 @@ def move_group_python_interface_tutorial():
     print robot.get_current_state()
     print "============"
     
-    print "============ Generating plan 1 for left end_effector"
-    pose_target = geometry_msgs.msg.Pose()
-    pose_target.orientation.w = 1.0
-    pose_target.position.x = 0.7
-    pose_target.position.y = -0.05
-    pose_target.position.z = 1.1
-    left.set_pose_target(pose_target)
+    print "============ Printing robot variables"
+    print robot.get_current_variable_values()
+    print "============"
+
+    print "============ Printing left hand values"
+    print "%s" % left.get_end_effector_link()
     
+    print "============ Generating plan 1 for left end_effector"
+    left.set_start_state_to_current_state()
+    left.set_position_target([0.1817, 0.8461, -0.5083])
+    #left.set_random_target()   
+ 
+
     plan1 = left.plan()
     print "============ Waiting while RVIZ displays plan1..."
     rospy.sleep(5)
@@ -65,7 +70,7 @@ def move_group_python_interface_tutorial():
     left.clear_pose_targets()
     # current set of left arm joint values
     group_variable_values = left.get_current_joint_values()
-    print "============ Joint values left: ", group_variable_values
+    print "============ Joint values left: %s" % group_variable_values
     group_variable_values[0] = 1.0
     group.set_joint_value_target(group_variable_values)
     
