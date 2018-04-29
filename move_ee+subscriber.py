@@ -6,8 +6,26 @@ import rospy
 import moveit_commander
 import moveit_msgs.msg
 import geometry_msgs.msg
+import rospy
+from std_msgs.msg import String
 
-def move_group_python_interface_tutorial():
+pos_left = [0.0, 0.0, 0.0]
+pos_right = [0.0, 0.0, 0.0]
+
+def find_joints(data):
+    global pos_left
+    global pos_right
+    position = data.data
+    pos_left = position[0:3]
+    pos_right = position[3:6]
+    
+def listener():
+    rospy.init_node('node_name')
+    rospy.Subscriber("joints", String, find_joints)
+    # spin() simply keeps python from exiting until this node is stopped
+    rospy.spin()
+
+def move_EE(pos_left, pos_right):
     print "============ Starting tutorial setup"
     moveit_commander.roscpp_initialize(sys.argv)
     rospy.init_node('move_group_python_interface_tutorial',
@@ -46,17 +64,15 @@ def move_group_python_interface_tutorial():
     print "============ Printing robot variables"
     print robot.get_current_variable_values()
     print "============"
-
-    print "============ Printing left hand values"
-    print "%s" % left.get_end_effector_link()
     
     print "============ Generating plan 1 for left end_effector"
-    left.set_start_state_to_current_state()
-    left.set_position_target([0.1817, 0.8461, -0.5083])
+    left.set_position_target(pos_left)
+    right.set_position_target(pos_right)
     #left.set_random_target()   
  
 
-    plan1 = left.plan()
+    plan_l = left.plan()
+    plan_r = right.plan()
     print "============ Waiting while RVIZ displays plan1..."
     rospy.sleep(5)
     
@@ -68,24 +84,12 @@ def move_group_python_interface_tutorial():
     #left.execute(plan1)
     
     left.clear_pose_targets()
-    # current set of left arm joint values
-    group_variable_values = left.get_current_joint_values()
-    print "============ Joint values left: %s" % group_variable_values
-    group_variable_values[0] = 1.0
-    group.set_joint_value_target(group_variable_values)
-    
-    plan2 = left.plan()
-    
-    print "============ Waiting while RVIZ displays plan2..."
-    rospy.sleep(5)
-    
-    #left.execute(plan2)
+    right.clear_pose_targets()
     
     moveit_commander.roscpp_shutdown()
 
 if __name__=='__main__':
-    move_group_python_interface_tutorial()
-
-
-
-
+    while True:
+        listener()
+        move_EE(pos_left, pos_right)
+    
