@@ -20,8 +20,6 @@ w0_right = 0.0
 
 print "============ Starting tutorial setup"
 moveit_commander.roscpp_initialize(sys.argv)
-rospy.init_node('move_group_python_interface_tutorial',
-                anonymous=True)
 
 # instantiate robot commander object
 robot = moveit_commander.RobotCommander()
@@ -50,7 +48,8 @@ print robot.get_group_names()
 
 def move_to_pos(data):
     global pos_left, pos_right, s0_left, e0_left, w0_left, s0_right, e0_right, w0_right
-    position = data.data
+    pos = data.data.split(',')
+    position = [float(x) for x in pos]
     pos_left = position[0:3]
     pos_right = position[3:6]
 
@@ -64,14 +63,12 @@ def move_to_pos(data):
     move(pos_left, pos_right, s0_left, e0_left, w0_left, s0_right, e0_right, w0_right)
 
 def listener():
-    rospy.init_node('node_name')
-    rospy.Subscriber("pos_publisher", String, move_to_pos)
+    rospy.init_node('mover', anonymous=True)
+    rospy.Subscriber("joints", String, move_to_pos)
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
 def move(pos_left, pos_right, shoulder_left, elbow_left, wrist_left, shoulder_right, elbow_right, wrist_right):    
-    global robot, scene, left, right, display_trajectory_publisher
-
     print "============ Printing robot state"
     print robot.get_current_state()
     print "============"
@@ -80,18 +77,21 @@ def move(pos_left, pos_right, shoulder_left, elbow_left, wrist_left, shoulder_ri
     print robot.get_current_variable_values()
     print "============"
     
-    print "============ Generating plan 1 for left end_effector"
+    print "============ Generating EE position plans"
     left.set_position_target(pos_left)
-    right.set_position_target(pos_right)
+    left.set_goal_tolerance(0.25)
+    right = moveit_commander.MoveGroupCommander("right_arm")
+    right.set_goal_tolerance(0.25)
     #left.set_random_target()   
  
+    print "============ Generating joint angle plans"
     # current set of left arm joint values
     left_joints = left.get_current_joint_values()
     right_joints = right.get_current_joint_values()
     print "============ Joint values left: %s" % left_joints
     print "============ Joint values right: %s" % right_joints
-    d_left = {"s0":shoulder_left, "e0":elbow_left, "w0":wrist_left}
-    d_right = {"s0":shoulder_right, "e0":elbow_right, "w0":wrist_right}
+    d_left = {"left_s0":shoulder_left, "left_e0":elbow_left, "left_w0":wrist_left}
+    d_right = {"right_s0":shoulder_right, "right_e0":elbow_right, "right_w0":wrist_right}
 
     left.set_joint_value_target(d_left)
     right.set_joint_value_target(d_right)
