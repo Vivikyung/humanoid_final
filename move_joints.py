@@ -51,15 +51,20 @@ def move_joints():
     print "%s" % left.get_end_effector_link()
     
     # current set of left arm joint values
-    group_variable_values = left.get_current_joint_values()
-    print "============ Joint values left: %s" % group_variable_values
-    group_variable_values[0] = 1.0
-    group.set_joint_value_target(group_variable_values)
+    #group_variable_values = left.get_current_joint_values()
+    #print "============ Joint values left: %s" % group_variable_values
+    #group_variable_values[0] = 1.0
+    d = {"left_w0":1.0, "right_w0":1.0}
+    left.set_joint_value_target(d)
     
     plan = left.plan()
     
     print "============ Waiting while RVIZ displays plan2..."
     rospy.sleep(5)
+    
+    print "============ Printing robot variables"
+    print robot.get_current_variable_values()
+    print "============"
     
     #left.execute(plan2)
 
