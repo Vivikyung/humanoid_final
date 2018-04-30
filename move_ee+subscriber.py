@@ -14,8 +14,6 @@ pos_right = [0.0, 0.0, 0.0]
 
 print "============ Starting tutorial setup"
 moveit_commander.roscpp_initialize(sys.argv)
-rospy.init_node('move_group_python_interface_tutorial',
-                anonymous=True)
 
 # instantiate robot commander object
 robot = moveit_commander.RobotCommander()
@@ -36,10 +34,12 @@ display_trajectory_publisher = rospy.Publisher(
 def find_joints(data):
     global pos_left
     global pos_right
-    position = data.data.split(',')
+    pos = data.data.split(',')
+    position = [float(x) for x in pos]
     pos_left = position[0:3]
+    print("left position " + str(pos_left))
     pos_right = position[3:6]
-    move(pose_left, pos_right)
+    move_EE(pos_left, pos_right)
 
 def listener():
     rospy.init_node('mover', anonymous=True)
@@ -84,4 +84,4 @@ if __name__=='__main__':
         listener()
         move_EE(pos_left, pos_right)
     
- moveit_commander.roscpp_shutdown()
+moveit_commander.roscpp_shutdown()
