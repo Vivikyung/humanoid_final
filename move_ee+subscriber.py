@@ -12,51 +12,43 @@ from std_msgs.msg import String
 pos_left = [0.0, 0.0, 0.0]
 pos_right = [0.0, 0.0, 0.0]
 
+print "============ Starting tutorial setup"
+moveit_commander.roscpp_initialize(sys.argv)
+rospy.init_node('move_group_python_interface_tutorial',
+                anonymous=True)
+
+# instantiate robot commander object
+robot = moveit_commander.RobotCommander()
+
+# instantiate planning scene interface object
+scene = moveit_commander.PlanningSceneInterface()
+
+# instantiate arm move group commanders
+left = moveit_commander.MoveGroupCommander("left_arm")
+right = moveit_commander.MoveGroupCommander("right_arm")
+
+# publishes trajectory to visualize
+display_trajectory_publisher = rospy.Publisher(
+                                        '/move_group/display_planned_path',
+                                        moveit_msgs.msg.DisplayTrajectory,
+                                        queue_size=20)
+
 def find_joints(data):
     global pos_left
     global pos_right
-    position = data.data
+    position = data.data.split(',')
     pos_left = position[0:3]
     pos_right = position[3:6]
-    
+    move(pose_left, pos_right)
+
 def listener():
-    rospy.init_node('node_name')
+    rospy.init_node('mover', anonymous=True)
     rospy.Subscriber("joints", String, find_joints)
     # spin() simply keeps python from exiting until this node is stopped
     rospy.spin()
 
-def move_EE(pos_left, pos_right):
-    print "============ Starting tutorial setup"
-    moveit_commander.roscpp_initialize(sys.argv)
-    rospy.init_node('move_group_python_interface_tutorial',
-                    anonymous=True)
-    
-    # instantiate robot commander object
-    robot = moveit_commander.RobotCommander()
-    
-    # instantiate planning scene interface object
-    scene = moveit_commander.PlanningSceneInterface()
-    
-    # instantiate arm move group commanders
-    left = moveit_commander.MoveGroupCommander("left_arm")
-    right = moveit_commander.MoveGroupCommander("right_arm")
-    
-    # publishes trajectory to visualize
-    display_trajectory_publisher = rospy.Publisher(
-                                        '/move_group/display_planned_path',
-                                        moveit_msgs.msg.DisplayTrajectory,
-                                        queue_size=20)
-    
+def move_EE(pos_left, pos_right):    
     # Gather basic information
-    print "============ Reference frame left: %s" % left.get_planning_frame()
-    print "============ Reference frame right: %s" % right.get_planning_frame()
-    
-    print "============ End effector left: %s" % left.get_end_effector_link()
-    print "============ End effector right: %s" % right.get_end_effector_link()
-    
-    print "============ Robot Groups:"
-    print robot.get_group_names()
-    
     print "============ Printing robot state"
     print robot.get_current_state()
     print "============"
@@ -85,11 +77,11 @@ def move_EE(pos_left, pos_right):
     
     left.clear_pose_targets()
     right.clear_pose_targets()
-    
-    moveit_commander.roscpp_shutdown()
+   
 
 if __name__=='__main__':
     while True:
         listener()
         move_EE(pos_left, pos_right)
     
+ moveit_commander.roscpp_shutdown()

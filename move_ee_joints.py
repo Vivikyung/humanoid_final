@@ -21,7 +21,9 @@ def move_joints():
     
     # instantiate arm move group commanders
     left = moveit_commander.MoveGroupCommander("left_arm")
+    left.set_goal_tolerance(0.25)
     right = moveit_commander.MoveGroupCommander("right_arm")
+    right.set_goal_tolerance(0.25)
     
     # publishes trajectory to visualize
     display_trajectory_publisher = rospy.Publisher(
