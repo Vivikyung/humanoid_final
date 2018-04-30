@@ -54,8 +54,8 @@ def move_joints():
     #group_variable_values = left.get_current_joint_values()
     #print "============ Joint values left: %s" % group_variable_values
     #group_variable_values[0] = 1.0
-    d = {"left_w0":1.0}
-    left.set_joint_value_target(d)
+    d = {"right_s0":0.0, "right_s1":0.0, "right_e0":0.0, "right_e1":0.0, "right_w0":0.0, "right_w1":0.0, "right_w2":0.0}
+    right.set_joint_value_target(d)
     
     plan = left.plan()
     
